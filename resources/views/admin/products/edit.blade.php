@@ -615,8 +615,19 @@
             <div class="form-card">
                 <h2 class="card-title">🖼️ Product Images</h2>
                 <p class="helper-text" style="margin-bottom: 1.5rem;">
-                    Upload images for each color variant
+                    Upload images for each color variant (max 10 Mo)
                 </p>
+
+                @if ($errors->has('image'))
+                    <div style="background:#fdecea;color:#b3261e;padding:0.75rem 1rem;border-radius:8px;margin-bottom:1rem;">
+                        {{ $errors->first('image') }}
+                    </div>
+                @endif
+                @if (session('success'))
+                    <div style="background:#e7f6ec;color:#1e6b3a;padding:0.75rem 1rem;border-radius:8px;margin-bottom:1rem;">
+                        {{ session('success') }}
+                    </div>
+                @endif
 
                 @foreach($product->productColors as $pc)
                     <div class="color-images-card">

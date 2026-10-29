@@ -282,7 +282,7 @@
 
 <!-- Hero Section -->
 <section class="hero-section">
-    <img src="{{ asset('storage/images/hero.png') }}" alt="Hero" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0;">
+    <img src="{{ asset('images/hero.jpg') }}" alt="Hero" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0;">
     <div class="hero-overlay"></div>
     <div class="hero-content">
         <h1 class="hero-title">CLEMENCE PARIS</h1>

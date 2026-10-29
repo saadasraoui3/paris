@@ -564,7 +564,7 @@
                 <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
                 <button class="icon-btn" onclick="openCart()">
                     {{-- 🛒 --}}
-                    <img src="{{ asset('storage/images/shopping-bag.svg') }}" alt="Cart" style="width: 30px; height: 30px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-label="Cart" role="img"><path d="M5.5 8h13l-1 12.5h-11L5.5 8z"/><path d="M9 10.5V7a3 3 0 0 1 6 0v3.5"/></svg>
                     @php
                         $cart = \App\Models\Cart::where('session_id', session()->getId())
                             ->with('items')

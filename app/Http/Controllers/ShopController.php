@@ -123,7 +123,7 @@ class ShopController extends Controller
                 $query->orderBy('created_at', 'desc');
                 break;
             case 'popular':
-                $query->orderBy('views', 'desc');
+                $query->orderBy('is_featured', 'desc')->latest();
                 break;
             default:
                 $query->latest();

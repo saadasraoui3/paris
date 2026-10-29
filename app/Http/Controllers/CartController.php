@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Product;
+use App\Models\ProductColor;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -14,8 +16,11 @@ class CartController extends Controller
             'product_id' => 'required|exists:products,id',
             'product_color_id' => 'required|exists:product_colors,id',
             'quantity' => 'required|integer|min:1',
-            'price' => 'required|numeric'
         ]);
+
+        // Price always comes from the database, never from the form
+        $product = Product::findOrFail($r->product_id);
+        ProductColor::where('product_id', $product->id)->findOrFail($r->product_color_id);
 
         $cart = Cart::firstOrCreate([
             'session_id' => session()->getId()
@@ -37,7 +42,7 @@ class CartController extends Controller
                 'product_id' => $r->product_id,
                 'product_color_id' => $r->product_color_id,
                 'quantity' => $r->quantity,
-                'price' => $r->price
+                'price' => $product->price
             ]);
         }
 
@@ -55,6 +60,8 @@ class CartController extends Controller
 
     public function updateQuantity(Request $r, CartItem $cartItem)
     {
+        $this->authorizeItem($cartItem);
+
         $r->validate([
             'quantity' => 'required|integer|min:1'
         ]);
@@ -71,7 +78,17 @@ class CartController extends Controller
 
     public function remove(CartItem $cartItem)
     {
+        $this->authorizeItem($cartItem);
+
         $cartItem->delete();
         return back()->with('success', 'Produit supprimé du panier');
+    }
+
+    // Make sure the item belongs to the visitor's own cart
+    private function authorizeItem(CartItem $cartItem): void
+    {
+        $cart = Cart::where('session_id', session()->getId())->first();
+
+        abort_unless($cart && (int) $cartItem->cart_id === (int) $cart->id, 403);
     }
 }

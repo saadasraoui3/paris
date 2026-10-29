@@ -12,7 +12,7 @@ class ProductColorImageController extends Controller
     public function store(Request $r, ProductColor $productColor)
     {
         $r->validate([
-            'image' => 'required|image|max:2048'
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240'
         ]);
 
         $path = $r->file('image')->store('products','public');
@@ -23,7 +23,7 @@ class ProductColorImageController extends Controller
             'is_main' => $r->boolean('is_main')
         ]);
 
-        return back();
+        return back()->with('success', 'Image ajoutée');
     }
 
     public function destroy(ProductColorImage $image)

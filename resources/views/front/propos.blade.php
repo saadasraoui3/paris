@@ -363,7 +363,7 @@
 
         <div class="story-content">
             <div class="story-image">
-                <img src="{{ asset('storage/images/propos.jpeg') }}" alt="Clémence Paris Histoire">
+                <img src="{{ asset('images/propos.jpeg') }}" alt="Clémence Paris Histoire">
             </div>
 
             <div class="story-text">

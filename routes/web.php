@@ -15,12 +15,7 @@ use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::get('/', [ShopController::class,'home'])->name('home');
-Route::get('/shop', [ShopController::class,'shop'])->name('shop');
 Route::get('/product/{slug}', [ShopController::class,'show'])->name('product.show');
 Route::get('/guide', [ShopController::class,'guide'])->name('guide');
 Route::get('/faq', [ShopController::class,'faq'])->name('faq');
@@ -42,20 +37,14 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::resource('orders',OrderController::class);
     Route::resource('order-items',OrderItemController::class);
 
+    Route::put('orders/{order}/status', [OrderController::class, 'updateStatus'])
+        ->name('orders.status');
+    Route::post('product-color/{productColor}/images', [ProductColorImageController::class, 'store'])
+        ->name('product-color.images.store');
+    Route::delete('product-color/images/{image}', [ProductColorImageController::class, 'destroy'])
+        ->name('product-color.images.destroy');
 });
 
-Route::put('/admin/orders/{order}/status',
-    [OrderController::class, 'updateStatus']
-)->name('admin.orders.status');
-
-// web.php
-Route::post('admin/product-color/{productColor}/images',
-    [ProductColorImageController::class,'store']
-)->name('admin.product-color.images.store');
-
-Route::delete('admin/product-color/images/{image}',
-    [ProductColorImageController::class,'destroy']
-)->name('admin.product-color.images.destroy');
 Route::get('/checkout',[CheckoutController::class,'index'])->name('checkout');
 Route::post('/checkout',[CheckoutController::class,'store'])->name('checkout.store');
 
