@@ -36,6 +36,9 @@ return [
     'popular' => 'Popular',
     'imageNotAvailable' => 'Image not available',
     'seeProduct' => 'See Product →',
+    'seePack' => 'See Pack →',
+    'front.pack.badge' => 'Pack',
+    'front.pack.choose_colors' => 'Choose the color of each product',
     'seeMoreProducts' => 'See More Products',
 
     // Trust badges
@@ -46,6 +49,12 @@ return [
     'securePayment' => 'Secure Payment',
     'securePaymentDescription' => 'Safe and secure online transactions',
     'front.shop.hero_title' => 'Handmade Luxury Scarves',
+    'front.shop.packs_title' => 'Our Packs',
+    'front.shop.packs_subtitle' => 'Curated selections at an exclusive price',
+    'front.shop.pack_includes' => 'This pack includes:',
+    'front.shop.pack_save' => 'Save',
+    'front.shop.packs_filter' => 'Packs',
+    'front.shop.no_packs_found' => 'No packs available at the moment.',
     // Notre Boutique
     'front.shop.hero_description' => 'Discover our exclusive collection of luxury scarves',
     'front.shop.categories' => 'Categories',

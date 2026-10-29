@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\ProductColor;
 use Illuminate\Http\Request;
 
 class CheckoutController extends Controller
@@ -12,7 +13,7 @@ class CheckoutController extends Controller
     public function index()
     {
         $cart = Cart::where('session_id',session()->getId())
-            ->with('items.product','items.productColor.color')
+            ->with('items.product','items.productColor.color','items.productColor.images','items.pack')
             ->firstOrFail();
 
         return view('front.checkout', compact('cart'));
@@ -65,7 +66,7 @@ class CheckoutController extends Controller
     ]);
 
     $cart = Cart::where('session_id',session()->getId())
-        ->with('items.product','items.productColor')
+        ->with('items.product','items.productColor','items.pack')
         ->firstOrFail();
 
     $total = $cart->items->sum(fn($i)=>$i->price * $i->quantity);
@@ -103,6 +104,26 @@ class CheckoutController extends Controller
 
 
     foreach ($cart->items as $item) {
+        if ($item->isPack()) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'pack_id' => $item->pack_id,
+                'pack_items' => $item->pack_items,
+                'product_name' => $item->pack->name,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'subtotal' => $item->price * $item->quantity
+            ]);
+
+            // نقص stock de chaque produit du pack
+            foreach ($item->pack_items as $packItem) {
+                ProductColor::whereKey($packItem['product_color_id'])
+                    ->decrement('stock', $packItem['quantity'] * $item->quantity);
+            }
+
+            continue;
+        }
+
         OrderItem::create([
             'order_id' => $order->id,
             'product_id' => $item->product_id,

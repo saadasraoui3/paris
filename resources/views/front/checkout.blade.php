@@ -470,15 +470,14 @@
                         $subtotal = $item->price * $item->quantity;
                         $total += $subtotal;
 
-                        $image = $item->productColor->images->where('is_main', 1)->first()
-                              ?? $item->productColor->images->first();
+                        $image = $item->image_path;
                     @endphp
 
                     <div class="order-item">
                         @if($image)
                             <img
-                                src="{{ asset('storage/'.$image->image) }}"
-                                alt="{{ $item->product->name }}"
+                                src="{{ asset('storage/'.$image) }}"
+                                alt="{{ $item->display_name }}"
                                 class="item-image"
                             >
                         @else
@@ -486,9 +485,9 @@
                         @endif
 
                         <div class="item-details">
-                            <div class="item-name">{{ $item->product->name }}</div>
+                            <div class="item-name">{{ $item->display_name }}</div>
                             <div class="item-meta">
-                                {{ $item->productColor->color->name }} × {{ $item->quantity }}
+                                {{ $item->color_label }} × {{ $item->quantity }}
                             </div>
                             <div class="item-price">
                                 {{ number_format($subtotal, 2) }} DH

@@ -39,6 +39,9 @@ return [
     'popular' => 'Populaire',
     'imageNotAvailable' => 'Image non disponible',
     'seeProduct' => 'Voir le produit →',
+    'seePack' => 'Voir le pack →',
+    'front.pack.badge' => 'Pack',
+    'front.pack.choose_colors' => 'Choisissez la couleur de chaque produit',
     'seeMoreProducts' => 'Voir plus de produits',
 
     // Trust badges
@@ -49,6 +52,12 @@ return [
     'securePayment' => 'Paiement Sécurisé',
     'securePaymentDescription' => 'Transactions en ligne sûres et sécurisées',
     'front.shop.hero_title' => 'Foulards de Luxe faits main',
+    'front.shop.packs_title' => 'Nos Packs',
+    'front.shop.packs_subtitle' => 'Des sélections à prix exclusif',
+    'front.shop.pack_includes' => 'Ce pack contient :',
+    'front.shop.pack_save' => 'Économisez',
+    'front.shop.packs_filter' => 'Packs',
+    'front.shop.no_packs_found' => 'Aucun pack disponible pour le moment.',
     // Notre Boutique
     'front.shop.hero_description' => 'Découvrez notre collection exclusive de foulards de luxe',
     'front.shop.categories' => 'Catégories',

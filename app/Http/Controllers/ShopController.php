@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\ContactMessageMail;
 use App\Models\Category;
 use App\Models\Color;
+use App\Models\Pack;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -86,6 +87,15 @@ class ShopController extends Controller
         return view('front.product', compact('product'));
     }
 
+    public function showPack($slug) {
+        $pack = Pack::where('is_active', true)
+            ->whereSlug($slug)
+            ->with('products.productColors.color', 'products.productColors.images')
+            ->firstOrFail();
+
+        return view('front.pack', compact('pack'));
+    }
+
     public function index(Request $request)
     {
         // Start with all products
@@ -135,10 +145,26 @@ class ShopController extends Controller
         $allCategories = Category::all();
         $allColors = Color::all();
 
+        // Les packs s'affichent seulement quand le filtre "Packs" est coché
+        $showPacks = $request->boolean('packs');
+        $packs = collect();
+
+        if ($showPacks) {
+            $packs = Pack::where('is_active', true)
+                ->whereHas('products')
+                ->with('products.productColors.images')
+                ->when($sort === 'price_asc', fn ($q) => $q->orderBy('price', 'asc'))
+                ->when($sort === 'price_desc', fn ($q) => $q->orderBy('price', 'desc'))
+                ->latest()
+                ->get();
+        }
+
         return view('front.shop', [
             'products' => $products,
             'categories' => $allCategories,
             'colors' => $allColors,
+            'packs' => $packs,
+            'showPacks' => $showPacks,
         ]);
     }
 }

@@ -366,17 +366,160 @@
             overflow-x: auto;
         }
     }
+
+    .pack-btn {
+        background-color: var(--primary-color);
+    }
+
+    .pack-btn:hover {
+        background-color: #444;
+    }
+
+    .packs-section {
+        margin-bottom: 2rem;
+    }
+
+    .packs-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.8rem;
+        font-weight: 400;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+    }
+
+    .packs-title span {
+        font-size: 1.1rem;
+        color: #999;
+    }
+
+    .packs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .pack-card {
+        background: white;
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .pack-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .pack-name {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .pack-price {
+        color: var(--accent-color);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .pack-old-price {
+        font-size: 0.8rem;
+        color: #999;
+        margin-top: -0.5rem;
+    }
+
+    .pack-products {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.85rem;
+        color: #666;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 0.75rem;
+        flex: 1;
+    }
+
+    .pack-products li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.2rem 0;
+    }
 </style>
 
 <div class="admin-container">
     <!-- Header -->
     <div class="admin-header">
         <h1 class="admin-title">Products</h1>
-        <a href="{{ route('admin.products.create') }}" class="add-btn">
-            <span>➕</span>
-            <span>Add Product</span>
-        </a>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <a href="{{ route('admin.packs.create') }}" class="add-btn pack-btn">
+                <span>🎁</span>
+                <span>Create Pack</span>
+            </a>
+            <a href="{{ route('admin.products.create') }}" class="add-btn">
+                <span>➕</span>
+                <span>Add Product</span>
+            </a>
+        </div>
     </div>
+
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    <!-- Packs -->
+    @if($packs->count() > 0)
+        <div class="packs-section">
+            <h2 class="packs-title">Packs <span>({{ $packs->count() }})</span></h2>
+
+            <div class="packs-grid">
+                @foreach($packs as $pack)
+                    <div class="pack-card">
+                        <div class="pack-card-header">
+                            <div class="pack-name">🎁 {{ $pack->name }}</div>
+                            <div class="pack-price">{{ number_format($pack->price, 2) }} DH</div>
+                        </div>
+
+                        @if($pack->products_total > $pack->price)
+                            <div class="pack-old-price">
+                                <s>{{ number_format($pack->products_total, 2) }} DH</s>
+                                · -{{ number_format($pack->products_total - $pack->price, 2) }} DH
+                            </div>
+                        @endif
+
+                        <ul class="pack-products">
+                            @foreach($pack->products as $item)
+                                <li>
+                                    <span>{{ $item->name }}</span>
+                                    <span>× {{ $item->pivot->quantity }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+
+                        <div class="action-buttons">
+                            <a href="{{ route('admin.packs.edit', $pack) }}" class="action-btn edit-btn">
+                                ✏️ Edit
+                            </a>
+                            <form method="POST" action="{{ route('admin.packs.destroy', $pack) }}" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button
+                                    type="submit"
+                                    class="action-btn delete-btn"
+                                    onclick="return confirm('Are you sure you want to delete this pack?')"
+                                >
+                                    🗑️ Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
 
     <!-- Stats Cards -->
     <div class="products-stats">

@@ -14,11 +14,22 @@ class OrderItem extends Model
         'order_id',
         'product_id',
         'product_color_id',
+        'pack_id',
+        'pack_items',
         'product_name',
         'quantity',
         'price',
         'subtotal'
     ];
+
+    protected $casts = [
+        'pack_items' => 'array'
+    ];
+
+    public function pack()
+    {
+        return $this->belongsTo(Pack::class);
+    }
 
      public function product()
     {

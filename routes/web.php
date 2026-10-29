@@ -8,6 +8,7 @@ use App\Http\Controllers\ColorController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
+use App\Http\Controllers\PackController;
 use App\Http\Controllers\ProductColorController;
 use App\Http\Controllers\ProductColorImageController;
 use App\Http\Controllers\ProductController;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Session;
 
 Route::get('/', [ShopController::class,'home'])->name('home');
 Route::get('/product/{slug}', [ShopController::class,'show'])->name('product.show');
+Route::get('/pack/{slug}', [ShopController::class,'showPack'])->name('pack.show');
 Route::get('/guide', [ShopController::class,'guide'])->name('guide');
 Route::get('/faq', [ShopController::class,'faq'])->name('faq');
 Route::get('/propos', [ShopController::class,'propos'])->name('propos');
@@ -26,11 +28,13 @@ Route::post('/contact', [ShopController::class, 'sendContact'])
     ->name('contact.send');
 
 Route::post('/cart/add',[CartController::class,'add'])->name('cart.add');
+Route::post('/cart/add-pack',[CartController::class,'addPack'])->name('cart.addPack');
 Route::get('/cart',[CartController::class,'index'])->name('cart.index');
 
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function(){
     Route::resource('categories',CategoryController::class);
     Route::resource('products',ProductController::class);
+    Route::resource('packs',PackController::class)->except(['show']);
     Route::resource('colors',ColorController::class);
     Route::resource('product-colors',ProductColorController::class);
     Route::resource('product-color-images',ProductColorImageController::class);

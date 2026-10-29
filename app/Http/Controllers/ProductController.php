@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Color;
+use App\Models\Pack;
 use App\Models\Product;
 use App\Models\ProductColor;
 use Illuminate\Http\Request;
@@ -13,7 +14,8 @@ class ProductController extends Controller
     public function index() {
         $categories = Category::all();
         $products = Product::with('category')->paginate(10);
-        return view('admin.products.index', compact('products', 'categories'));
+        $packs = Pack::with('products')->latest()->get();
+        return view('admin.products.index', compact('products', 'categories', 'packs'));
     }
 
     public function create() {

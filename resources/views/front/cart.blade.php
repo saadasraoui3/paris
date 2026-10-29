@@ -23,13 +23,12 @@
                     {{-- Product Image --}}
                     <div class="w-24 h-24 flex-shrink-0">
                         @php
-                            $image = $item->productColor->images->where('is_main', 1)->first()
-                                  ?? $item->productColor->images->first();
+                            $image = $item->image_path;
                         @endphp
                         @if($image)
-                            <img src="{{ asset('storage/'.$image->image) }}"
+                            <img src="{{ asset('storage/'.$image) }}"
                                  class="w-full h-full object-cover rounded"
-                                 alt="{{ $item->product->name }}">
+                                 alt="{{ $item->display_name }}">
                         @else
                             <div class="w-full h-full bg-gray-200 rounded flex items-center justify-center">
                                 <span class="text-gray-400 text-xs">No image</span>
@@ -39,9 +38,9 @@
 
                     {{-- Product Info --}}
                     <div class="flex-1">
-                        <h3 class="font-semibold text-lg">{{ $item->product->name }}</h3>
+                        <h3 class="font-semibold text-lg">{{ $item->display_name }}</h3>
                         <p class="text-sm text-gray-500">
-                            Couleur: {{ $item->productColor->color->name }}
+                            {{ $item->isPack() ? '' : 'Couleur: ' }}{{ $item->color_label }}
                         </p>
                         <p class="text-green-600 font-semibold mt-1">
                             {{ $item->price }} DH
@@ -67,7 +66,7 @@
                                 name="quantity"
                                 value="{{ $item->quantity }}"
                                 min="1"
-                                max="{{ $item->productColor->stock }}"
+                                max="{{ $item->max_stock }}"
                                 class="w-16 text-center border border-gray-300 rounded py-1 quantity-input"
                                 data-item-id="{{ $item->id }}"
                             >
@@ -76,7 +75,7 @@
                                 type="button"
                                 class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded increase-qty"
                                 data-item-id="{{ $item->id }}"
-                                data-stock="{{ $item->productColor->stock }}"
+                                data-stock="{{ $item->max_stock }}"
                             >
                                 +
                             </button>

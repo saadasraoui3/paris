@@ -193,8 +193,16 @@
             <tbody>
                 @foreach($order->items as $item)
                     <tr>
-                        <td>{{ $item->product->name }}</td>
-                        <td>{{ $item->productColor->color->name ?? '-' }}</td>
+                        <td>{{ $item->pack_items ? '🎁 ' : '' }}{{ $item->product_name ?? $item->product->name }}</td>
+                        <td>
+                            @if($item->pack_items)
+                                @foreach($item->pack_items as $packItem)
+                                    <div>{{ $packItem['product_name'] }} : {{ $packItem['color_name'] }}{{ $packItem['quantity'] > 1 ? ' ×'.$packItem['quantity'] : '' }}</div>
+                                @endforeach
+                            @else
+                                {{ $item->productColor->color->name ?? '-' }}
+                            @endif
+                        </td>
                         <td>{{ number_format($item->price, 2) }} DH</td>
                         <td>{{ $item->quantity }}</td>
                         <td>

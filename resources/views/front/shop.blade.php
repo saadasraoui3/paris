@@ -207,6 +207,83 @@
         gap: 2.5rem;
     }
 
+    .packs-section {
+        margin-bottom: 3.5rem;
+    }
+
+    .packs-heading {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        font-weight: 300;
+        letter-spacing: 1px;
+        color: var(--primary-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .packs-subheading {
+        color: var(--text-light);
+        margin-bottom: 2rem;
+    }
+
+    .pack-images {
+        display: grid;
+        width: 100%;
+        height: 100%;
+        gap: 2px;
+    }
+
+    .pack-images img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        min-height: 0;
+        transition: transform 0.5s ease;
+    }
+
+    .pack-card:hover .pack-images img {
+        transform: scale(1.05);
+    }
+
+    .pack-images-2 { grid-template-columns: 1fr 1fr; }
+    .pack-images-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .pack-images-3 img:first-child { grid-row: span 2; }
+    .pack-images-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+
+    .pack-old-price {
+        color: #999;
+        font-size: 0.9rem;
+        margin-left: 0.5rem;
+    }
+
+    .pack-includes {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        margin-bottom: 0.4rem;
+    }
+
+    .pack-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .pack-items li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.25rem 0;
+        border-bottom: 1px dashed #eee;
+    }
+
+    .pack-items a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .pack-items a:hover {
+        color: var(--accent-color);
+    }
+
     .product-card {
         background: white;
         border-radius: 8px;
@@ -397,6 +474,21 @@
     <!-- Sidebar Filters -->
     <aside class="shop-sidebar">
         <form id="filterForm" method="GET" action="{{ route('shop.index') }}">
+            <!-- Packs Filter -->
+            <div class="filter-section">
+                <h3 class="filter-title">{{ __('messages.front.shop.packs_filter') }}</h3>
+                <div class="filter-option">
+                    <input type="checkbox"
+                           id="filter-packs"
+                           name="packs"
+                           value="1"
+                           class="filter-checkbox"
+                           {{ $showPacks ? 'checked' : '' }}
+                           onchange="filterProducts()">
+                    <label for="filter-packs" class="filter-label">{{ __('messages.front.shop.packs_title') }}</label>
+                </div>
+            </div>
+
             <!-- Categories Filter from Database -->
             @if($categories->count() > 0)
                 <div class="filter-section">
@@ -470,7 +562,11 @@
         <!-- Shop Header with Sort -->
         <div class="shop-header">
             <div class="shop-count">
-                <strong>{{ $products->count() }}</strong> {{ __('messages.front.shop.product') }}{{ $products->count() > 1 ? 's' : '' }}
+                @if($showPacks)
+                    <strong>{{ $packs->count() }}</strong> pack{{ $packs->count() > 1 ? 's' : '' }}
+                @else
+                    <strong>{{ $products->count() }}</strong> {{ __('messages.front.shop.product') }}{{ $products->count() > 1 ? 's' : '' }}
+                @endif
             </div>
 
             <select class="sort-select" onchange="sortProducts(this.value)">
@@ -482,8 +578,80 @@
             </select>
         </div>
 
+        <!-- Packs (filtre "Packs" coché) -->
+        @if($showPacks)
+            @if($packs->count() > 0)
+            <div class="packs-section">
+                <h2 class="packs-heading">{{ __('messages.front.shop.packs_title') }}</h2>
+                <p class="packs-subheading">{{ __('messages.front.shop.packs_subtitle') }}</p>
+
+                <div class="products-grid">
+                    @foreach($packs as $pack)
+                        @php
+                            // Première image de chaque produit du pack (max 4)
+                            $packImages = $pack->products->map(function ($p) {
+                                $pc = $p->productColors->first();
+                                return $pc ? ($pc->images->where('is_main', 1)->first() ?? $pc->images->first()) : null;
+                            })->filter()->take(4);
+                            $saving = $pack->products_total - $pack->price;
+                        @endphp
+
+                        <div class="product-card pack-card">
+                            <div class="product-image-container">
+                                @if($saving > 0)
+                                    <span class="product-badge">{{ __('messages.front.shop.pack_save') }} {{ number_format($saving, 0) }} DH</span>
+                                @endif
+
+                                @if($packImages->count() > 0)
+                                    <div class="pack-images pack-images-{{ $packImages->count() }}">
+                                        @foreach($packImages as $img)
+                                            <img src="{{ asset('storage/'.$img->image) }}" alt="{{ $pack->name }}">
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="product-no-image">🎁</div>
+                                @endif
+                            </div>
+
+                            <div class="product-info">
+                                <h3 class="product-name">{{ $pack->name }}</h3>
+
+                                <p class="product-price">
+                                    {{ number_format($pack->price, 2) }} DH
+                                    @if($saving > 0)
+                                        <s class="pack-old-price">{{ number_format($pack->products_total, 2) }} DH</s>
+                                    @endif
+                                </p>
+
+                                <p class="pack-includes">{{ __('messages.front.shop.pack_includes') }}</p>
+                                <ul class="pack-items">
+                                    @foreach($pack->products as $item)
+                                        <li>
+                                            <a href="{{ route('product.show', $item->slug) }}">{{ $item->name }}</a>
+                                            @if($item->pivot->quantity > 1)
+                                                <span>× {{ $item->pivot->quantity }}</span>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+
+                                <a href="{{ route('pack.show', $pack->slug) }}" class="product-link" style="margin-top: 1rem;">
+                                    {{ __('messages.seePack') }}
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @else
+                <div class="no-products">
+                    <div class="no-products-icon">🎁</div>
+                    <h3 class="no-products-title">{{ __('messages.front.shop.no_packs_found') }}</h3>
+                </div>
+            @endif
+
         <!-- Products Grid -->
-        @if($products->count() > 0)
+        @elseif($products->count() > 0)
             <div class="products-grid">
                 @foreach($products as $product)
                     <div class="product-card">

@@ -50,7 +50,7 @@
 
     @php
         $cart = \App\Models\Cart::where('session_id',session()->getId())
-            ->with('items.product','items.productColor.color','items.productColor.images')
+            ->with('items.product','items.productColor.color','items.productColor.images','items.pack')
             ->first();
     @endphp
 
@@ -86,11 +86,10 @@
                     {{-- Image --}}
                     <div style="width:80px; height:80px; flex-shrink:0;">
                         @php
-                            $image = $item->productColor->images->where('is_main', 1)->first()
-                                  ?? $item->productColor->images->first();
+                            $image = $item->image_path;
                         @endphp
                         @if($image)
-                            <img src="{{ asset('storage/'.$image->image) }}"
+                            <img src="{{ asset('storage/'.$image) }}"
                                  style="
                                     width:100%;
                                     height:100%;
@@ -98,7 +97,7 @@
                                     border-radius:8px;
                                     border:1px solid #f0f0f0;
                                  "
-                                 alt="{{ $item->product->name }}">
+                                 alt="{{ $item->display_name }}">
                         @else
                             <div style="
                                 width:100%;
@@ -126,10 +125,10 @@
                             text-overflow:ellipsis;
                             white-space:nowrap;
                         ">
-                            {{ $item->product->name }}
+                            {{ $item->display_name }}
                         </div>
                         <div style="font-size:0.8rem; color:#999;">
-                            {{ $item->productColor->color->name }}
+                            {{ $item->color_label }}
                         </div>
                         <div style="
                             font-size:1rem;
@@ -180,7 +179,7 @@
                                     name="quantity"
                                     value="{{ $item->quantity }}"
                                     min="1"
-                                    max="{{ $item->productColor->stock }}"
+                                    max="{{ $item->max_stock }}"
                                     class="quantity-input-slider"
                                     data-item-id="{{ $item->id }}"
                                     data-initial-value="{{ $item->quantity }}"
@@ -200,7 +199,7 @@
                                     type="button"
                                     class="qty-btn-slider increase-qty-slider"
                                     data-item-id="{{ $item->id }}"
-                                    data-stock="{{ $item->productColor->stock }}"
+                                    data-stock="{{ $item->max_stock }}"
                                     style="
                                         background:#f8f8f8;
                                         border:1px solid #e5e5e5;

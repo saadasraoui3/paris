@@ -39,6 +39,9 @@ return [
     'popular' => 'شائع',
     'imageNotAvailable' => 'الصورة غير متوفرة',
     'seeProduct' => 'عرض المنتج →',
+    'seePack' => 'عرض الباقة →',
+    'front.pack.badge' => 'باقة',
+    'front.pack.choose_colors' => 'اختر لون كل منتج',
     'seeMoreProducts' => 'عرض المزيد من المنتجات',
 
     // Trust badges
@@ -49,6 +52,12 @@ return [
     'securePayment' => 'دفع آمن',
     'securePaymentDescription' => 'معاملات إلكترونية آمنة ومحمية',
     'front.shop.hero_title' => 'أوشحة فاخرة مصنوعة يدوياً',
+    'front.shop.packs_title' => 'باقاتنا',
+    'front.shop.packs_subtitle' => 'تشكيلات بأسعار حصرية',
+    'front.shop.pack_includes' => 'تحتوي هذه الباقة على:',
+    'front.shop.pack_save' => 'وفّر',
+    'front.shop.packs_filter' => 'الباقات',
+    'front.shop.no_packs_found' => 'لا توجد باقات متاحة حالياً.',
     // Notre Boutique
     'front.shop.hero_description' => 'اكتشف مجموعتنا الحصرية من الأوشحة فاخرة',
     'front.shop.categories' => 'الفئات',
